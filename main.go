@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"flag"
 	"fmt"
 	"github.com/go-fsnotify/fsnotify"
@@ -21,25 +20,19 @@ func main() {
 
 	defer watcher.Close()
 
+	runFile()
+
 	done := make(chan bool)
 
 	go func() {
 		for {
 			select {
 			case event := <-watcher.Events:
-				if time.Now().After(last_time.Add(1 * time.Second)) {
+				if time.Now().After(last_time.Add(500 * time.Millisecond)) {
 					last_time = time.Now()
 
 					log.Println(event.Name, "modified. Reloading...")
-
-					cmd := exec.Command("python3", *python_file)
-
-					var out bytes.Buffer
-					cmd.Stdout = &out
-
-					_ = cmd.Run()
-
-					fmt.Println(out.String())
+					runFile()
 				}
 
 			case err := <-watcher.Errors:
@@ -53,4 +46,9 @@ func main() {
 	_ = watcher.Add(*watch_dir)
 
 	<-done
+}
+
+func runFile() {
+	out, _ := exec.Command("python3", *python_file).CombinedOutput()
+	fmt.Printf("%s", out)
 }
