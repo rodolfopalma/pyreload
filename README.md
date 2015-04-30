@@ -11,7 +11,7 @@ PyReload currently receives two flags:
 + `-f`: path of file that is going to be run
 + `-d`: folder/file being watched for changes
 
-## Requireements
+## Requirements
 This tool relies in [go-fsnotify](https://github.com/go-fsnotify/fsnotify). It must be installed.
 
 ## To Do
